@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUTOCAD Quizz - Expertise Génie Électrique</title>
+    <title>AUTOCAD Quizz - Expertise Max_Adis</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -27,7 +27,6 @@
             min-height: 100vh;
         }
 
-        /* Header Professionnel */
         header {
             padding: 20px 40px;
             display: flex;
@@ -40,19 +39,17 @@
             font-size: 24px;
             font-weight: 500;
             color: var(--text-sub);
-            letter-spacing: -0.5px;
         }
 
-        /* Container Principal */
         .main-container {
             max-width: 720px;
             margin: 40px auto;
             padding: 0 20px;
             flex-grow: 1;
             width: 100%;
+            box-sizing: border-box;
         }
 
-        /* Barre de Progression */
         .header-stats {
             display: flex;
             align-items: center;
@@ -72,7 +69,7 @@
             height: 100%;
             background: var(--primary);
             width: 0%;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.4s ease;
         }
 
         .counter-pill {
@@ -94,7 +91,6 @@
         .stat-wrong { background: #fce8e6; color: var(--error); }
         .stat-right { background: #e6f4ea; color: var(--success); }
 
-        /* Question & Options */
         .question-box h2 {
             font-size: 22px;
             font-weight: 400;
@@ -110,29 +106,11 @@
             margin-bottom: 12px;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            position: relative;
         }
 
-        .option-card:hover:not(.locked) {
-            background: #f1f3f4;
-        }
-
-        .option-card.selected {
-            border-color: var(--primary);
-            background: #f0f4f9;
-        }
-
-        /* Feedbacks couleurs demandés */
-        .option-card.correct-ans {
-            background: #e6f4ea !important;
-            border: none;
-        }
-        .option-card.wrong-ans {
-            background: #fce8e6 !important;
-            border: none;
-        }
+        .option-card:hover:not(.locked) { background: #f1f3f4; }
+        .option-card.correct-ans { background: #e6f4ea !important; }
+        .option-card.wrong-ans { background: #fce8e6 !important; }
 
         .feedback-msg {
             margin-top: 10px;
@@ -145,37 +123,27 @@
         .text-error { color: var(--error); font-weight: 600; }
         .text-success { color: var(--success); font-weight: 600; }
 
-        /* Navigation */
         .footer-nav {
             margin-top: 40px;
             padding: 25px 0;
             display: flex;
             justify-content: flex-end;
-            gap: 15px;
             border-top: 1px solid #e3e3e3;
         }
 
         .btn {
-            padding: 10px 30px;
+            padding: 12px 35px;
             border-radius: 24px;
-            font-family: inherit;
             font-size: 15px;
             font-weight: 500;
             cursor: pointer;
-            transition: 0.2s;
-            border: 1px solid var(--border);
-            background: white;
-        }
-
-        .btn-primary {
+            border: none;
             background: var(--primary);
             color: white;
-            border: none;
         }
 
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        /* Ecran Final */
         #final-screen { display: none; text-align: center; padding: 40px 0; }
         .result-grid {
             display: grid;
@@ -188,21 +156,21 @@
             padding: 25px;
             border-radius: 16px;
         }
-        .res-card h1 { font-size: 42px; margin: 10px 0; color: var(--primary); }
+        .res-card h1 { font-size: 42px; color: var(--primary); margin: 10px 0; }
 
-        /* Footer personnalisé */
         .max-footer {
             text-align: center;
             padding: 30px;
             color: var(--text-sub);
             font-size: 13px;
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <center> <div class="title-brand">AUTOCAD Quizz 💻 </div></center>
+    <div class="title-brand">AUTOCAD Quizz 💻🚀</div>
 </header>
 
 <div class="main-container">
@@ -217,18 +185,17 @@
         </div>
 
         <div class="question-box">
-            <h2 id="q-text">Chargement de l'expertise...</h2>
+            <h2 id="q-text">Chargement...</h2>
             <div id="options-list"></div>
         </div>
 
         <div class="footer-nav">
-            <button class="btn" id="btn-back" disabled>Retour</button>
-            <button class="btn btn-primary" id="btn-next" disabled>Suivant</button>
+            <button class="btn" id="btn-next" disabled>Suivant</button>
         </div>
     </div>
 
     <div id="final-screen">
-        <h2 style="font-weight: 500;">Révisions terminées !</h2>
+        <h2>Félicitations ! Révision terminée.</h2>
         <div class="result-grid">
             <div class="res-card">
                 <p>Note Finale</p>
@@ -239,74 +206,137 @@
                 <h1 id="f-percent">0%</h1>
             </div>
         </div>
-        <button class="btn btn-primary" onclick="location.reload()">Recommencer la session</button>
+        <button class="btn" onclick="location.reload()">Recommencer</button>
     </div>
 </div>
 
 <footer class="max-footer">
-    <p>Signaler un problème technique</p>
+    <p>Signaler un contenu</p>
     <p><strong>Conçu par Max_Adis</strong></p>
 </footer>
 
 <script>
     const quizData = [
         {
-            q: "Quelle commande permet de dupliquer rapidement un objet à un emplacement précis et de répéter l'action ?",
-            options: ["Ligne", "Copier", "Déplacer", "Aucun"],
+            q: "Quelle commande AutoCAD permet de dupliquer un objet à un emplacement précis ?",
+            options: ["Ligne", "Copier", "Déplacer", "Effacer"],
             correct: 1,
-            justifCorrect: "La commande COPIER crée une ou plusieurs copies d'objets sélectionnés à une distance et une direction spécifiées.",
-            justifWrong: "Déplacer change la position sans dupliquer. Ligne crée un segment, pas une copie."
+            justif: "La commande COPIER (ou CP) permet de créer des duplicatas sans supprimer l'original."
         },
         {
-            q: "Quelle commande permet de basculer un objet selon un axe symétrique (symétrie orthogonale) ?",
-            options: ["Polyligne", "Ligne", "Miroir", "Aucun"],
+            q: "Quelle touche du clavier active/désactive le mode ORTHO ?",
+            options: ["F3", "F7", "F8", "F10"],
             correct: 2,
-            justifCorrect: "MIROIR crée une copie inversée de l'objet de l'autre côté d'un axe défini.",
-            justifWrong: "Ligne et Polyligne sont des outils de dessin de base, pas des outils de transformation symétrique."
+            justif: "F8 permet de contraindre les lignes horizontalement ou verticalement."
         },
         {
-            q: "Quelle commande permet d'obtenir une nouvelle entité similaire à l'originale avec une distance de décalage ?",
-            options: ["Décaler", "Déplacer", "Symétrie", "Aucun"],
+            q: "Quelle commande crée une copie parallèle d'un objet avec une distance définie ?",
+            options: ["Décaler", "Échelle", "Miroir", "Ajuster"],
             correct: 0,
-            justifCorrect: "DÉCALER (OFFSET) crée des cercles concentriques, des lignes parallèles ou des courbes parallèles.",
-            justifWrong: "Symétrie inverse l'objet. Déplacer ne crée pas de nouvelle entité."
+            justif: "DÉCALER (OFFSET) est utilisé pour créer des lignes ou cercles concentriques."
         },
         {
-            q: "Quel mode empêche les mouvements obliques lorsqu'il est activé dans AutoCAD ?",
-            options: ["Décomposer", "Échelle", "Ortho (F8)", "Polygone"],
-            correct: 2,
-            justifCorrect: "Le mode ORTHO contraint le déplacement du curseur aux directions horizontale et verticale.",
-            justifWrong: "Décomposer sépare un bloc en éléments simples. Échelle modifie la taille."
-        },
-        {
-            q: "Laquelle de ces affirmations sur le schéma électrique est vraie ?",
-            options: ["Un schéma n'explique pas le fonctionnement", "La figure 3 présente un plan architectural", "Le schéma est une représentation conventionnelle", "La figure 2 est un schéma multifilaire"],
-            correct: 2,
-            justifCorrect: "Par définition, un schéma électrique utilise des symboles conventionnels pour représenter une installation.",
-            justifWrong: "La figure 3 est un schéma multifilaire (moteur), pas architectural. La figure 2 est un schéma unifilaire de tableau."
-        },
-        {
-            q: "Quelle commande décompose un objet en ses composants pour les modifier séparément ?",
-            options: ["Copier", "Décomposer", "Décaler", "Rotation"],
+            q: "Quel outil permet de briser un bloc en éléments individuels ?",
+            options: ["Ajuster", "Décomposer", "Joindre", "Grouper"],
             correct: 1,
-            justifCorrect: "DÉCOMPOSER (EXPLODE) casse un bloc, une polyligne ou une hachure en ses éléments individuels.",
-            justifWrong: "Rotation fait pivoter l'objet. Décaler crée une copie parallèle."
+            justif: "DÉCOMPOSER (EXPLODE) sépare un objet composé en ses entités de base."
         },
         {
-            q: "Dans un schéma multifilaire de départ moteur (Fig. 3), quel est le rôle de F2 ?",
-            options: ["Sectionneur", "Contacteur", "Relais Thermique", "Fusible"],
+            q: "L'extension de fichier standard d'un dessin AutoCAD est :",
+            options: [".PDF", ".DOCX", ".DWG", ".EXE"],
             correct: 2,
-            justifCorrect: "F2 représente la protection thermique contre les surcharges prolongées du moteur.",
-            justifWrong: "Le sectionneur est Q1. Le contacteur est KM1."
+            justif: ".DWG signifie 'DraWinG', c'est le format natif d'AutoCAD."
         },
         {
-            q: "Quel est le rôle principal du cartouche sur un dessin technique ?",
-            options: ["Décoration", "Identification du projet", "Liste du matériel", "Mesure des angles"],
+            q: "Comment appelle-t-on le schéma représentant tous les fils d'une installation ?",
+            options: ["Unifilaire", "Architectural", "Multifilaire", "Synoptique"],
+            correct: 2,
+            justif: "Le schéma multifilaire montre chaque conducteur de manière détaillée."
+        },
+        {
+            q: "Quelle commande permet de modifier la taille d'un objet proportionnellement ?",
+            options: ["Rotation", "Échelle", "Étirer", "Déplacer"],
             correct: 1,
-            justifCorrect: "Le cartouche contient les infos cruciales : titre, échelle, auteur (Max_Adis), et date.",
-            justifWrong: "La liste du matériel est la nomenclature, pas le cartouche."
+            justif: "ÉCHELLE permet d'agrandir ou de réduire un objet selon un facteur précis."
+        },
+        {
+            q: "Quel mode permet d'accrocher le curseur sur le milieu d'une ligne ?",
+            options: ["Ortho", "Grille", "Accrochage (OSNAP)", "Polaire"],
+            correct: 2,
+            justif: "L'accrochage aux objets (F3) permet de viser les points précis comme le milieu."
+        },
+        {
+            q: "En électricité, que représente le symbole conventionnel d'un disjoncteur ?",
+            options: ["Une protection", "Une ampoule", "Un simple fil", "Une pile"],
+            correct: 0,
+            justif: "Le disjoncteur est un appareil de protection contre les surcharges et courts-circuits."
+        },
+        {
+            q: "Quelle commande AutoCAD permet de supprimer les parties inutiles d'un objet croisé ?",
+            options: ["Effacer", "Ajuster", "Prolonger", "Couper"],
+            correct: 1,
+            justif: "AJUSTER (TRIM) permet de couper les segments dépassant d'une limite."
+        },
+        {
+            q: "Quelle commande permet de faire pivoter un objet autour d'un point ?",
+            options: ["Miroir", "Rotation", "Déplacer", "Aligner"],
+            correct: 1,
+            justif: "ROTATION permet de tourner un objet selon un angle spécifié."
+        },
+        {
+            q: "Le mode 'Accrochage' se gère généralement avec quelle touche ?",
+            options: ["F1", "F3", "F5", "F12"],
+            correct: 1,
+            justif: "F3 active ou désactive l'aide à l'accrochage (extrémités, milieux, centres)."
+        },
+        {
+            q: "Quelle commande crée un arc de cercle ?",
+            options: ["Cercle", "Arc", "Spline", "Polyligne"],
+            correct: 1,
+            justif: "La commande ARC dessine des portions de cercles à partir de 3 points."
+        },
+        {
+            q: "Dans AutoCAD, l'espace où l'on dessine le projet est appelé :",
+            options: ["Espace Papier", "Espace Objet", "Espace Bloc", "Espace Calque"],
+            correct: 1,
+            justif: "L'Espace Objet est la zone infinie de création 2D/3D."
+        },
+        {
+            q: "Quelle est la commande pour créer une suite de segments liés ?",
+            options: ["Ligne", "Polyligne", "Rayon", "Point"],
+            correct: 1,
+            justif: "Une POLYLIGNE forme un seul objet même avec plusieurs segments."
+        },
+        {
+            q: "Pour annuler la dernière action dans AutoCAD, on utilise :",
+            options: ["CTRL+C", "CTRL+Z", "CTRL+S", "CTRL+P"],
+            correct: 1,
+            justif: "Comme dans la plupart des logiciels, CTRL+Z annule l'erreur précédente."
+        },
+        {
+            q: "Que signifie le terme 'Plan Architectural' en électricité ?",
+            options: ["Schéma des fils", "Position des équipements dans le bâtiment", "Calcul des puissances", "Dessin de pièces mécaniques"],
+            correct: 1,
+            justif: "Le plan architectural montre l'emplacement des prises et lampes sur le plan de la maison."
+        },
+        {
+            q: "Quelle commande permet de remplir une zone fermée avec un motif ?",
+            options: ["Hachures", "Région", "Solide", "Couleur"],
+            correct: 0,
+            justif: "HACHURES (HATCH) permet d'ajouter des textures ou motifs de remplissage."
+        },
+        {
+            q: "L'outil 'Miroir' demande-t-il un axe de symétrie ?",
+            options: ["Oui", "Non", "Seulement pour les cercles", "Seulement en 3D"],
+            correct: 0,
+            justif: "Pour créer une symétrie, il faut impérativement définir deux points d'un axe."
+        },
+        {
+            q: "Quel outil permet de mesurer une distance entre deux points ?",
+            options: ["Cote", "Distance (DI)", "Rayon", "Angle"],
+            correct: 1,
+            justif: "La commande DIST (DI) affiche la valeur numérique entre deux points dans la barre de commande."
         }
-        // Tu peux ajouter les 12 autres questions ici pour atteindre 20
     ];
 
     let current = 0;
@@ -314,86 +344,63 @@
     let wrongs = 0;
     let locked = false;
 
-    const qText = document.getElementById('q-text');
-    const optionsList = document.getElementById('options-list');
-    const btnNext = document.getElementById('btn-next');
-    const pBar = document.getElementById('p-bar');
-    const qCount = document.getElementById('q-count');
-
-    function initQuiz() {
+    function init() {
         locked = false;
-        btnNext.disabled = true;
-        const data = quizData[current];
-        qText.innerText = `${current + 1}. ${data.q}`;
-        optionsList.innerHTML = '';
-
-        data.options.forEach((opt, i) => {
+        document.getElementById('btn-next').disabled = true;
+        const d = quizData[current];
+        document.getElementById('q-text').innerText = `${current+1}. ${d.q}`;
+        const list = document.getElementById('options-list');
+        list.innerHTML = '';
+        
+        d.options.forEach((opt, i) => {
             const card = document.createElement('div');
             card.className = 'option-card';
-            card.innerHTML = `
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <span style="color:#70757a; font-weight:600;">${String.fromCharCode(65+i)}</span>
-                    <span>${opt}</span>
-                </div>
-                <div class="feedback-msg" id="msg-${i}"></div>
-            `;
-            card.onclick = () => handleSelect(i, card);
-            optionsList.appendChild(card);
+            card.innerHTML = `<strong>${String.fromCharCode(65+i)}.</strong> ${opt}<div class="feedback-msg" id="f-${i}"></div>`;
+            card.onclick = () => select(i, card);
+            list.appendChild(card);
         });
 
-        pBar.style.width = `${((current + 1) / quizData.length) * 100}%`;
-        qCount.innerText = `${current + 1} / ${quizData.length}`;
+        document.getElementById('p-bar').style.width = `${((current+1)/20)*100}%`;
+        document.getElementById('q-count').innerText = `${current+1} / 20`;
     }
 
-    function handleSelect(idx, el) {
-        if (locked) return;
+    function select(idx, el) {
+        if(locked) return;
         locked = true;
-        const correctIdx = quizData[current].correct;
-        const allCards = document.querySelectorAll('.option-card');
+        const correct = quizData[current].correct;
+        const cards = document.querySelectorAll('.option-card');
 
-        if (idx === correctIdx) {
+        if(idx === correct) {
             el.classList.add('correct-ans');
-            const msg = el.querySelector('.feedback-msg');
-            msg.innerHTML = `<span class="text-success">✓ Bonne réponse !</span><br>${quizData[current].justifCorrect}`;
-            msg.classList.add('visible');
+            el.querySelector('.feedback-msg').innerHTML = `<span class="text-success">✓ Correct !</span><br>${quizData[current].justif}`;
             score++;
             document.getElementById('r-val').innerText = score;
         } else {
             el.classList.add('wrong-ans');
-            const msgErr = el.querySelector('.feedback-msg');
-            msgErr.innerHTML = `<span class="text-error">✕ Pas tout à fait</span><br>${quizData[current].justifWrong}`;
-            msgErr.classList.add('visible');
-            
-            // Afficher aussi la bonne réponse
-            allCards[correctIdx].classList.add('correct-ans');
-            const msgRight = allCards[correctIdx].querySelector('.feedback-msg');
-            msgRight.innerHTML = `<span class="text-success">La réponse correcte était :</span><br>${quizData[current].justifCorrect}`;
-            msgRight.classList.add('visible');
-            
+            el.querySelector('.feedback-msg').innerHTML = `<span class="text-error">✕ Incorrect</span><br>La bonne réponse était la ${String.fromCharCode(65+correct)}.`;
+            cards[correct].classList.add('correct-ans');
+            cards[correct].querySelector('.feedback-msg').innerHTML = `<span class="text-success">Explication :</span><br>${quizData[current].justif}`;
             wrongs++;
             document.getElementById('w-val').innerText = wrongs;
         }
-        btnNext.disabled = false;
+        
+        document.querySelectorAll('.feedback-msg').forEach(m => m.classList.add('visible'));
+        document.getElementById('btn-next').disabled = false;
     }
 
-    btnNext.onclick = () => {
+    document.getElementById('btn-next').onclick = () => {
         current++;
-        if (current < quizData.length) {
-            initQuiz();
-        } else {
-            showEnd();
+        if(current < 20) init();
+        else {
+            document.getElementById('quiz-area').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'block';
+            document.getElementById('f-score').innerText = `${score}/20`;
+            document.getElementById('f-percent').innerText = `${(score/20)*100}%`;
         }
     };
 
-    function showEnd() {
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('final-screen').style.display = 'block';
-        const finalNote = ((score / quizData.length) * 20).toFixed(1);
-        document.getElementById('f-score').innerText = `${finalNote}/20`;
-        document.getElementById('f-percent').innerText = `${Math.round((score / quizData.length) * 100)}%`;
-    }
-
-    initQuiz();
+    init();
 </script>
 </body>
-</html>
+                </html>
+    
