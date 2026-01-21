@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizz AutoCAD 💻</title>
+    <style>
+        :root {
+            --primary-blue: #1a73e8;
+            --bg-light: #f8f9fa;
+            --correct-green: #e6f4ea;
+            --correct-text: #1e8e3e;
+            --wrong-red: #fce8e6;
+            --wrong-text: #d93025;
+            --gray-border: #dadce0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #3c4043;
+        }
+
+        /* Header */
+        header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        .logo { font-size: 22px; font-weight: 500; color: #5f6368; }
+
+        /* Container Quizz */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            flex-grow: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Progress Bar Section */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            flex-grow: 1;
+            height: 8px;
+            background: #e8eaed;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-blue);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .counter { font-size: 14px; color: #70757a; min-width: 40px; }
+
+        .score-badges { display: flex; gap: 8px; }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge-red { background: var(--wrong-red); color: var(--wrong-text); }
+        .badge-green { background: var(--correct-green); color: var(--correct-text); }
+
+        /* Questions */
+        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 25px; }
+
+        .options-list { list-style: none; padding: 0; }
+        .option {
+            background: var(--bg-light);
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+        .option:hover { background: #eff2f5; }
+        .option.selected { border-color: var(--primary-blue); background: #e8f0fe; }
+        
+        .option.correct { background: var(--correct-green) !important; border: none; }
+        .option.wrong { background: var(--wrong-red) !important; border: none; }
+
+        .explanation {
+            margin-top: 10px;
+            font-size: 14px;
+            padding: 10px;
+            display: none;
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            border-top: 1px solid var(--gray-border);
+            padding-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            border-radius: 25px;
+            border: 1px solid var(--gray-border);
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .btn-next {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+        }
+
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Result Screen */
+        #result-screen { display: none; text-align: center; }
+        .result-card {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: #70757a;
+            border-top: 1px solid var(--gray-border);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Gemini Quizz</div>
+    <div style="width: 35px; height: 35px; background: #ddd; border-radius: 50%; overflow: hidden;">
+        <img src="https://via.placeholder.com/35" alt="Profile">
+    </div>
+</header>
+
+<div class="container">
+    <div id="quiz-screen">
+        <div class="progress-section">
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
+            </div>
+            <div class="counter" id="question-counter">1/20</div>
+            <div class="score-badges">
+                <div class="badge badge-red">✕ <span id="wrong-count">0</span></div>
+                <div class="badge badge-green">✓ <span id="correct-count">0</span></div>
+            </div>
+        </div>
+
+        <div id="question-container">
+            <div class="question-text" id="question-label">Chargement de la question...</div>
+            <div class="options-list" id="options-container"></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" id="btn-retour" disabled>Retour</button>
+            <button class="btn btn-next" id="btn-suivant">Suivant</button>
+        </div>
+    </div>
+
+    <div id="result-screen">
+        <h2>You did it! Quiz complete.</h2>
+        <div style="display: flex; gap: 20px;">
+            <div class="result-card">
+                <p>Score</p>
+                <h1 id="final-score">0/20</h1>
+            </div>
+            <div class="result-card">
+                <p>Accuracy</p>
+                <h1 id="final-percent">0%</h1>
+            </div>
+        </div>
+        <button class="btn" onclick="location.reload()">Recommencer</button>
+    </div>
+</div>
+
+<footer>
+    <p>Signaler un contenu</p>
+    <p><strong>Conçu par Max_Adis</strong></p>
+</footer>
+
+<script>
+    const questions = [
+        {
+            q: "Quelle commande permet de dessiner un cercle dans AutoCAD ?",
+            options: ["LIGNE", "CERCLE", "ARC", "RECTANGLE"],
+            correct: 1,
+            exp: "La commande CERCLE (ou 'C') est utilisée pour créer des cercles."
+        },
+        {
+            q: "Quel est l'onglet par défaut pour la conception de circuits ?",
+            options: ["Objet", "Présentation", "ARES", "Calque"],
+            correct: 0,
+            exp: "L'onglet 'Objet' est l'espace de travail principal."
+        },
+        {
+            q: "Quelle touche active le mode Ortho ?",
+            options: ["F3", "F5", "F8", "F10"],
+            correct: 2,
+            exp: "F8 permet de contraindre le curseur horizontalement ou verticalement."
+        },
+        // Ajoute ici tes 20 questions sur le même modèle
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let wrongs = 0;
+    let answered = false;
+
+    const qLabel = document.getElementById('question-label');
+    const optionsBox = document.getElementById('options-container');
+    const btnSuivant = document.getElementById('btn-suivant');
+    const progressFill = document.getElementById('progress-fill');
+    const counterText = document.getElementById('question-counter');
+
+    function loadQuestion() {
+        answered = false;
+        const data = questions[currentIdx];
+        qLabel.innerText = `${currentIdx + 1}. ${data.q}`;
+        optionsBox.innerHTML = '';
+        btnSuivant.disabled = true;
+
+        data.options.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.innerText = `${String.fromCharCode(65 + i)}.  ${opt}`;
+            div.onclick = () => selectOption(i, div);
+            optionsBox.appendChild(div);
+        });
+
+        // Update progress
+        const prog = ((currentIdx + 1) / questions.length) * 100;
+        progressFill.style.width = prog + '%';
+        counterText.innerText = `${currentIdx + 1}/${questions.length}`;
+    }
+
+    function selectOption(index, element) {
+        if(answered) return;
+        answered = true;
+        
+        const correctIdx = questions[currentIdx].correct;
+        const allOptions = document.querySelectorAll('.option');
+
+        if(index === correctIdx) {
+            element.classList.add('correct');
+            score++;
+            document.getElementById('correct-count').innerText = score;
+        } else {
+            element.classList.add('wrong');
+            allOptions[correctIdx].classList.add('correct');
+            wrongs++;
+            document.getElementById('wrong-count').innerText = wrongs;
+        }
+
+        btnSuivant.disabled = false;
+    }
+
+    btnSuivant.onclick = () => {
+        currentIdx++;
+        if(currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    };
+
+    function showResults() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score}/${questions.length}`;
+        const percent = Math.round((score / questions.length) * 100);
+        document.getElementById('final-percent').innerText = `${percent}%`;
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+  </html>
+  
