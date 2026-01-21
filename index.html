@@ -2,180 +2,259 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizz AutoCAD 💻</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AUTOCAD Quizz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-blue: #1a73e8;
-            --bg-light: #f8f9fa;
-            --correct-green: #e6f4ea;
-            --correct-text: #1e8e3e;
-            --wrong-red: #fce8e6;
-            --wrong-text: #d93025;
-            --gray-border: #dadce0;
+            /* Couleurs extraites de l'interface Gemini */
+            --primary-blue: #0b57d0;
+            --bg-light: #ffffff;
+            --bg-option: #f3f6fc;
+            --text-dark: #1f1f1f;
+            --text-light: #444746;
+            
+            --success-bg: #c4eed0;
+            --success-text: #046c4e;
+            --success-border: #6dd58c;
+
+            --error-bg: #f8d7da;
+            --error-text: #a50e0e;
+            --error-border: #f5c6cb;
+            
+            --gray-border: #e0e3e7;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: white;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-light);
             margin: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            color: #3c4043;
+            color: var(--text-dark);
         }
 
-        /* Header */
+        /* --- HEADER --- */
         header {
-            padding: 15px 20px;
+            padding: 16px 24px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--gray-border);
+            /* Pas d'éléments à droite, juste le titre à gauche */
         }
 
-        .logo { font-size: 22px; font-weight: 500; color: #5f6368; }
+        .header-title {
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--text-dark);
+        }
 
-        /* Container Quizz */
+        /* --- CONTAINER PRINCIPAL --- */
         .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 20px 24px;
             flex-grow: 1;
             width: 100%;
             box-sizing: border-box;
         }
 
-        /* Progress Bar Section */
+        /* --- BARRE DE PROGRESSION & SCORES --- */
         .progress-section {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 16px;
+            margin-bottom: 32px;
         }
 
-        .progress-bar-container {
+        .progress-bar-track {
             flex-grow: 1;
             height: 8px;
-            background: #e8eaed;
-            border-radius: 10px;
-            position: relative;
+            background: #e3e3e3;
+            border-radius: 4px;
+            overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
             background: var(--primary-blue);
-            border-radius: 10px;
-            transition: width 0.3s;
+            border-radius: 4px;
+            transition: width 0.4s ease;
         }
 
-        .counter { font-size: 14px; color: #70757a; min-width: 40px; }
+        .counter-text {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 500;
+            min-width: 45px;
+        }
 
-        .score-badges { display: flex; gap: 8px; }
+        .score-badges { display: flex; gap: 12px; }
         .badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
-        .badge-red { background: var(--wrong-red); color: var(--wrong-text); }
-        .badge-green { background: var(--correct-green); color: var(--correct-text); }
+        .badge-red { background: var(--error-bg); color: var(--error-text); }
+        .badge-green { background: var(--success-bg); color: var(--success-text); }
 
-        /* Questions */
-        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 25px; }
+        /* --- QUESTION --- */
+        .question-text {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
 
-        .options-list { list-style: none; padding: 0; }
-        .option {
-            background: var(--bg-light);
-            padding: 15px 20px;
-            margin-bottom: 12px;
+        /* --- OPTIONS --- */
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+
+        /* Le bouton de l'option */
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            background: var(--bg-option);
+            padding: 16px 20px;
             border-radius: 12px;
             cursor: pointer;
-            border: 1px solid transparent;
+            border: 2px solid transparent;
             transition: all 0.2s;
+            font-size: 16px;
+            color: var(--text-dark);
+            font-family: inherit;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .option-letter { font-weight: 500; margin-right: 12px; min-width: 25px;}
+
+        .option-btn:hover:not(:disabled) { background: #e8eef6; }
+
+        /* États après réponse */
+        .option-btn:disabled { cursor: default; }
+
+        .option-btn.selected-wrong {
+            background: var(--error-bg);
+            border-color: var(--error-bg);
+            color: var(--error-text);
+        }
+        
+        .option-btn.show-correct {
+            background: var(--success-bg);
+            border-color: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        /* --- BOITES D'EXPLICATION (Feedback style Gemini) --- */
+        .feedback-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-top: -4px; /* Collé sous le bouton */
+            margin-bottom: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-wrong {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid var(--error-border);
+        }
+
+        .feedback-correct {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid var(--success-border);
+        }
+
+        .feedback-title {
+            font-weight: 700;
             display: flex;
             align-items: center;
-        }
-        .option:hover { background: #eff2f5; }
-        .option.selected { border-color: var(--primary-blue); background: #e8f0fe; }
-        
-        .option.correct { background: var(--correct-green) !important; border: none; }
-        .option.wrong { background: var(--wrong-red) !important; border: none; }
-
-        .explanation {
-            margin-top: 10px;
-            font-size: 14px;
-            padding: 10px;
-            display: none;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        /* Buttons */
+        /* --- BOUTONS D'ACTION --- */
         .actions {
             display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            border-top: 1px solid var(--gray-border);
-            padding-top: 20px;
+            justify-content: flex-end; /* Juste le bouton suivant à droite */
+            margin-top: 32px;
         }
 
         .btn {
-            padding: 12px 35px;
-            border-radius: 25px;
-            border: 1px solid var(--gray-border);
-            background: white;
+            padding: 12px 24px;
+            border-radius: 24px;
+            border: none;
             cursor: pointer;
             font-weight: 500;
-            font-size: 15px;
+            font-size: 16px;
+            transition: background 0.2s;
         }
 
         .btn-next {
             background: var(--primary-blue);
             color: white;
-            border: none;
+            min-width: 120px;
+        }
+        .btn-next:hover { background: #0a46a8; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* --- ÉCRAN DE RÉSULTAT --- */
+        #result-screen { display: none; text-align: center; padding-top: 40px; }
+        .result-title { font-size: 28px; margin-bottom: 30px; }
+        
+        .result-cards-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
         }
 
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Result Screen */
-        #result-screen { display: none; text-align: center; }
         .result-card {
-            background: var(--bg-light);
-            padding: 30px;
-            border-radius: 20px;
-            margin: 20px 0;
-            display: inline-block;
-            width: 100%;
+            background: var(--bg-option);
+            padding: 24px;
+            border-radius: 16px;
+            width: 140px;
+            text-align: left;
         }
+        .result-card p { font-size: 14px; color: var(--text-light); margin: 0 0 10px 0; }
+        .result-card h1 { font-size: 32px; margin: 0; color: var(--primary-blue); }
 
-        /* Footer */
+        /* --- FOOTER --- */
         footer {
             text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: #70757a;
+            padding: 24px;
+            font-size: 14px;
+            color: var(--text-light);
             border-top: 1px solid var(--gray-border);
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">Gemini Quizz</div>
-    <div style="width: 35px; height: 35px; background: #ddd; border-radius: 50%; overflow: hidden;">
-        <img src="https://via.placeholder.com/35" alt="Profile">
-    </div>
+    <div class="header-title">AUTOCAD Quizz 💻</div>
 </header>
 
 <div class="container">
     <div id="quiz-screen">
         <div class="progress-section">
-            <div class="progress-bar-container">
-                <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
+            <div class="progress-bar-track">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
             </div>
-            <div class="counter" id="question-counter">1/20</div>
+            <div class="counter-text" id="question-counter">1/20</div>
             <div class="score-badges">
                 <div class="badge badge-red">✕ <span id="wrong-count">0</span></div>
                 <div class="badge badge-green">✓ <span id="correct-count">0</span></div>
@@ -183,133 +262,250 @@
         </div>
 
         <div id="question-container">
-            <div class="question-text" id="question-label">Chargement de la question...</div>
-            <div class="options-list" id="options-container"></div>
+            <div class="question-text" id="question-text">Chargement...</div>
+            <div class="options-list" id="options-list"></div>
         </div>
 
         <div class="actions">
-            <button class="btn" id="btn-retour" disabled>Retour</button>
-            <button class="btn btn-next" id="btn-suivant">Suivant</button>
+            <button class="btn btn-next" id="btn-suivant" disabled>Suivant</button>
         </div>
     </div>
 
     <div id="result-screen">
-        <h2>You did it! Quiz complete.</h2>
-        <div style="display: flex; gap: 20px;">
+        <h2 class="result-title">Terminé ! Voici vos résultats.</h2>
+        <div class="result-cards-container">
             <div class="result-card">
-                <p>Score</p>
+                <p>Note finale</p>
                 <h1 id="final-score">0/20</h1>
             </div>
             <div class="result-card">
-                <p>Accuracy</p>
+                <p>Précision</p>
                 <h1 id="final-percent">0%</h1>
             </div>
         </div>
-        <button class="btn" onclick="location.reload()">Recommencer</button>
+        <button class="btn btn-next" onclick="location.reload()">Recommencer le Quizz</button>
     </div>
 </div>
 
 <footer>
-    <p>Signaler un contenu</p>
     <p><strong>Conçu par Max_Adis</strong></p>
 </footer>
 
 <script>
+    /* --- LES 20 QUESTIONS BASÉES SUR TES DOCUMENTS --- */
     const questions = [
         {
-            q: "Quelle commande permet de dessiner un cercle dans AutoCAD ?",
-            options: ["LIGNE", "CERCLE", "ARC", "RECTANGLE"],
-            correct: 1,
-            exp: "La commande CERCLE (ou 'C') est utilisée pour créer des cercles."
+            q: "Selon votre cours, quelle commande permet de dupliquer rapidement un objet à un emplacement précis et de répéter l'action ?",
+            options: ["Ligne", "Copier", "Déplacer", "Aucun"],
+            correct: 1, // Index de "Copier"
+            explanation: "La commande COPIER permet de créer des doubles d'objets à une distance et dans une direction spécifiées."
         },
         {
-            q: "Quel est l'onglet par défaut pour la conception de circuits ?",
-            options: ["Objet", "Présentation", "ARES", "Calque"],
-            correct: 0,
-            exp: "L'onglet 'Objet' est l'espace de travail principal."
-        },
-        {
-            q: "Quelle touche active le mode Ortho ?",
-            options: ["F3", "F5", "F8", "F10"],
+            q: "Quelle commande permet de basculer un objet selon un axe symétrique (créer un reflet inverse) ?",
+            options: ["Polyligne", "Ligne", "Miroir", "Aucun"],
             correct: 2,
-            exp: "F8 permet de contraindre le curseur horizontalement ou verticalement."
+            explanation: "La commande MIROIR crée une copie inversée de l'objet sélectionné par rapport à une ligne de symétrie définie."
         },
-        // Ajoute ici tes 20 questions sur le même modèle
+        {
+            q: "Quelle commande permet d'obtenir une nouvelle entité similaire et parallèle à l'originale en donnant une distance ?",
+            options: ["Décaler", "Déplacer", "Symétrie", "Aucun"],
+            correct: 0,
+            explanation: "La commande DÉCALER crée des cercles concentriques, des lignes parallèles et des courbes parallèles."
+        },
+        {
+            q: "Quelle commande effectue une translation (déplacer selon une distance et une direction spécifiée) ?",
+            options: ["Déplacer", "Rotation", "Décaler", "Aucun"],
+            correct: 0,
+            explanation: "La commande DÉPLACER change la position des objets sans modifier leur orientation ou leur taille."
+        },
+        {
+            q: "Quel mode empêche les mouvements obliques quand il est activé, forçant des lignes horizontales ou verticales ?",
+            options: ["Décomposer", "Échelle", "Polygone", "Mode Ortho"],
+            correct: 3,
+            explanation: "Le mode ORTHO (souvent activé par F8) contraint le curseur aux axes horizontaux et verticaux."
+        },
+        {
+            q: "Quelle commande permet de séparer un objet complexe (comme un bloc ou une polyligne) en ses composants individuels ?",
+            options: ["Décomposer", "Copier", "Décaler", "Aucun"],
+            correct: 0,
+            explanation: "La commande DÉCOMPOSER (Explode) réduit un objet composé en ses éléments de base."
+        },
+        /* --- Questions basées sur les Figures et la théorie Élec --- */
+        {
+            q: "La Figure 3 du document présente quel type de plan ?",
+            options: ["Un plan architectural", "Un schéma de puissance moteur", "Un schéma unifilaire de distribution", "Un bornier"],
+            correct: 1,
+            explanation: "La Figure 3 montre un moteur (M), un contacteur (KM1, KM2) et un relais thermique (F2), typique d'un circuit de puissance."
+        },
+        {
+            q: "La Figure 1 du document présente quel type de plan ?",
+            options: ["Un schéma unifilaire", "Un schéma multifilaire", "Un plan d'implantation architectural électrique", "Un schéma fonctionnel"],
+            correct: 2,
+            explanation: "C'est un plan de bâtiment (vue de dessus) montrant où sont placés les prises, interrupteurs et luminaires."
+        },
+        {
+            q: "Le schéma de la Figure 2 est-il un schéma multifilaire ?",
+            options: ["Vrai", "Faux"],
+            correct: 0,
+            explanation: "Vrai. Tous les conducteurs (phase, neutre, terre) sont représentés distinctement pour chaque départ."
+        },
+        {
+            q: "Quel est le but principal d'un schéma électrique selon le cours ?",
+            options: ["Calculer le coût", "Expliquer le fonctionnement de l'équipement", "Définir la couleur des murs", "Aucun"],
+            correct: 1,
+            explanation: "Il sert à comprendre le fonctionnement, le câblage et à faciliter le dépannage de l'installation."
+        },
+        {
+            q: "Dans la Figure 2, que signifie '30ma' sur le disjoncteur différentiel ID1 ?",
+            options: ["Son courant nominal", "Sa tension de service", "Sa sensibilité de déclenchement différentiel", "Sa puissance"],
+            correct: 2,
+            explanation: "30mA est la sensibilité. Il coupe le courant si la fuite à la terre dépasse cette valeur (protection des personnes)."
+        },
+        /* --- Questions Générales AutoCAD/DAO --- */
+        {
+            q: "Quelle est l'extension de fichier standard pour un dessin AutoCAD ?",
+            options: [".pdf", ".dwg", ".docx", ".jpg"],
+            correct: 1,
+            explanation: "Le format natif des fichiers dessins AutoCAD est le .dwg (Drawing)."
+        },
+        {
+            q: "Quelle touche de fonction est généralement utilisée comme raccourci pour activer/désactiver le mode ORTHO ?",
+            options: ["F1", "F3", "F8", "F12"],
+            correct: 2,
+            explanation: "La touche F8 est le raccourci standard pour basculer le mode Orthogonal."
+        },
+        {
+            q: "Pour dessiner une suite de segments de ligne connectés qui forment un seul objet, on utilise :",
+            options: ["Ligne", "Polyligne", "Arc", "Cercle"],
+            correct: 1,
+            explanation: "Une Polyligne (PLINE) crée une séquence unique d'objets linéaires ou courbes."
+        },
+        {
+            q: "À quoi servent principalement les 'Calques' (Layers) dans AutoCAD ?",
+            options: ["À faire des calculs", "À organiser le dessin en regroupant des objets similaires", "À imprimer en 3D", "À rien"],
+            correct: 1,
+            explanation: "Les calques permettent de gérer la visibilité, la couleur et le type de ligne de groupes d'objets (ex: calque Murs, calque Élec)."
+        },
+        {
+            q: "Dans l'interface AutoCAD, où devez-vous aller pour préparer votre dessin pour l'impression ?",
+            options: ["Espace Objet (Model)", "Espace Présentation (Layout/Paper)", "La ligne de commande", "Le menu d'aide"],
+            correct: 1,
+            explanation: "L'espace Présentation est conçu pour la mise en page, l'ajout de cartouches et la préparation à l'impression."
+        },
+        {
+            q: "Quel outil permet de remplir une zone fermée avec un motif (ex: pour représenter un mur coupé) ?",
+            options: ["Hachures", "Remplir", "Gradient", "Contour"],
+            correct: 0,
+            explanation: "La commande HACHURES (HATCH) remplit une zone délimitée avec un motif prédéfini."
+        },
+        {
+            q: "Quelle est la commande raccourcie (alias) usuelle pour dessiner un CERCLE ?",
+            options: ["CE", "CI", "C", "CR"],
+            correct: 2,
+            explanation: "Taper juste 'C' puis Entrée lance généralement la commande CERCLE."
+        },
+        {
+            q: "Dans un cartouche de plan, que trouve-t-on généralement ?",
+            options: ["Le titre du projet et l'échelle", "La liste des courses", "Des photos du chantier", "Uniquement le logo"],
+            correct: 0,
+            explanation: "Le cartouche contient les infos essentielles : titre, nom du dessinateur, date, échelle, numéro de plan, etc."
+        },
+        {
+            q: "Si vous voulez zoomer pour voir tout votre dessin d'un coup, quelle commande Zoom utilisez-vous ?",
+            options: ["Zoom Fenêtre", "Zoom Tout / Étendu", "Zoom Arrière", "Zoom Avant"],
+            correct: 1,
+            explanation: "Zoom Étendu (Zoom Extents) ajuste la vue pour afficher tous les objets dessinés."
+        }
     ];
 
+    /* --- LOGIQUE JAVASCRIPT --- */
     let currentIdx = 0;
     let score = 0;
     let wrongs = 0;
-    let answered = false;
+    let isAnswered = false;
 
-    const qLabel = document.getElementById('question-label');
-    const optionsBox = document.getElementById('options-container');
+    // Éléments du DOM
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const qTextEl = document.getElementById('question-text');
+    const optionsListEl = document.getElementById('options-list');
     const btnSuivant = document.getElementById('btn-suivant');
     const progressFill = document.getElementById('progress-fill');
     const counterText = document.getElementById('question-counter');
+    const correctCountSpan = document.getElementById('correct-count');
+    const wrongCountSpan = document.getElementById('wrong-count');
+
+    // Lettres pour les options (A, B, C, D...)
+    const letters = ['A', 'B', 'C', 'D', 'E'];
 
     function loadQuestion() {
-        answered = false;
-        const data = questions[currentIdx];
-        qLabel.innerText = `${currentIdx + 1}. ${data.q}`;
-        optionsBox.innerHTML = '';
+        isAnswered = false;
+        const currentQ = questions[currentIdx];
+        
+        // Mise à jour de l'interface
+        qTextEl.innerText = `${currentIdx + 1}. ${currentQ.q}`;
+        optionsListEl.innerHTML = ''; // Vider les anciennes options
         btnSuivant.disabled = true;
 
-        data.options.forEach((opt, i) => {
-            const div = document.createElement('div');
-            div.className = 'option';
-            div.innerText = `${String.fromCharCode(65 + i)}.  ${opt}`;
-            div.onclick = () => selectOption(i, div);
-            optionsBox.appendChild(div);
+        // Générer les boutons d'option
+        currentQ.options.forEach((optText, index) => {
+            // Créer le conteneur principal pour le bouton ET son feedback potentiel
+            const optionWrapper = document.createElement('div');
+            optionWrapper.id = `option-wrapper-${index}`;
+
+            // Créer le bouton
+            const button = document.createElement('button');
+            button.className = 'option-btn';
+            button.id = `btn-${index}`;
+            button.innerHTML = `<span class="option-letter">${letters[index]}.</span> ${optText}`;
+            button.onclick = () => handleAnswer(index);
+            
+            optionWrapper.appendChild(button);
+            optionsListEl.appendChild(optionWrapper);
         });
 
-        // Update progress
-        const prog = ((currentIdx + 1) / questions.length) * 100;
-        progressFill.style.width = prog + '%';
-        counterText.innerText = `${currentIdx + 1}/${questions.length}`;
+        updateProgress();
     }
 
-    function selectOption(index, element) {
-        if(answered) return;
-        answered = true;
+    function handleAnswer(selectedIndex) {
+        if(isAnswered) return; // Empêcher de répondre deux fois
+        isAnswered = true;
+
+        const currentQ = questions[currentIdx];
+        const correctIndex = currentQ.correct;
+        const selectedBtn = document.getElementById(`btn-${selectedIndex}`);
+        const correctBtn = document.getElementById(`btn-${correctIndex}`);
         
-        const correctIdx = questions[currentIdx].correct;
-        const allOptions = document.querySelectorAll('.option');
+        // Désactiver tous les boutons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.disabled = true);
 
-        if(index === correctIdx) {
-            element.classList.add('correct');
+        if (selectedIndex === correctIndex) {
+            // --- RÉPONSE CORRECTE ---
             score++;
-            document.getElementById('correct-count').innerText = score;
+            correctCountSpan.innerText = score;
+            
+            // Style du bouton
+            selectedBtn.classList.add('show-correct');
+            // Changer A. par ✓
+            selectedBtn.querySelector('.option-letter').innerHTML = '✓';
+
+            // Afficher la boîte d'explication verte
+            showFeedbackBox(selectedIndex, 'correct', "Réponse correcte !", currentQ.explanation);
+
         } else {
-            element.classList.add('wrong');
-            allOptions[correctIdx].classList.add('correct');
+            // --- RÉPONSE FAUSSE ---
             wrongs++;
-            document.getElementById('wrong-count').innerText = wrongs;
-        }
+            wrongCountSpan.innerText = wrongs;
 
-        btnSuivant.disabled = false;
-    }
+            // Style du bouton faux
+            selectedBtn.classList.add('selected-wrong');
+            // Changer la lettre par ✕
+            selectedBtn.querySelector('.option-letter').innerHTML = '✕';
+            
+            // 1. Afficher la boîte d'explication ROUGE sous la mauvaise réponse
+            // Note : Pour simplifier, j'utilise l'explication générale, mais on pourrait en avoir une spécifique par mauvaise réponse.
+            showFeedbackBox(selectedIndex, 'wrong', "Pas tout à fait...", `Cette option est incorrecte. La bonne réponse est celle qui ${currentQ.explanation.toLowerCase()}`);
 
-    btnSuivant.onclick = () => {
-        currentIdx++;
-        if(currentIdx < questions.length) {
-            loadQuestion();
-        } else {
-            showResults();
-        }
-    };
-
-    function showResults() {
-        document.getElementById('quiz-screen').style.display = 'none';
-        document.getElementById('result-screen').style.display = 'block';
-        document.getElementById('final-score').innerText = `${score}/${questions.length}`;
-        const percent = Math.round((score / questions.length) * 100);
-        document.getElementById('final-percent').innerText = `${percent}%`;
-    }
-
-    loadQuestion();
-</script>
-
-</body>
-  </html>
-  
+            // 2. Révéler la VRAIE réponse en VERT
+            correctBtn.classList.add('sho
